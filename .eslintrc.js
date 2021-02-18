@@ -29,6 +29,6 @@ module.exports = {
     'react/forbid-prop-types': 'off',
     'no-use-before-define': 'off',
     'react/style-prop-object': 'off',
-    'react/jsx-filename-extension: off'
+    'react/jsx-filename-extension': 'off'
   }
 };
