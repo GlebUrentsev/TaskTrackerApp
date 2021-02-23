@@ -37,9 +37,7 @@ const styles = StyleSheet.create({
 });
 
 TasksScreen.navigationOptions = {
-  headerTitle: 'Текущие задачи',
-  headerLeft: () => <Button title="20" />,
-  headerRight: () => <Button title="21" />
+  headerTitle: 'Спринт'
 };
 
 export default TasksScreen;
