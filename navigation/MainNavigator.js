@@ -21,6 +21,17 @@ const SprintNavigator = createStackNavigator(
 );
 
 const MainNavigator = createMaterialBottomTabNavigator({
+  Sprint: {
+    screen: SprintNavigator,
+    navigationOptions: {
+      tabBarLabel: 'Спринт',
+      title: 'Спринт',
+      activeColor: '#f0edf6',
+      inactiveColor: '#3e2465',
+      barStyle: { backgroundColor: '#009999' },
+      tabBarIcon: ({ tintColor }) => <MaterialIcons name="work" size={24} color={tintColor} />
+    }
+  },
   Tasks: {
     screen: TasksNavigator,
     navigationOptions: {
@@ -33,17 +44,6 @@ const MainNavigator = createMaterialBottomTabNavigator({
     },
     tabBarOptions: {
       activeTintColor: '#cd077d'
-    }
-  },
-  Sprint: {
-    screen: SprintNavigator,
-    navigationOptions: {
-      tabBarLabel: 'Спринт',
-      title: 'Спринт',
-      activeColor: '#f0edf6',
-      inactiveColor: '#3e2465',
-      barStyle: { backgroundColor: '#009999' },
-      tabBarIcon: ({ tintColor }) => <MaterialIcons name="work" size={24} color={tintColor} />
     }
   }
 });
