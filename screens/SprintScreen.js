@@ -1,50 +1,55 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   FlatList,
   RefreshControl,
-  TouchableOpacity
+  Button
 } from 'react-native';
-
-const Item = ({ title }) => (
-  <TouchableOpacity activeOpacity={0.7}>
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-  </TouchableOpacity>
-);
+import SprintTask from '../components/Sprint/SprintTask';
+import SprintTaskModal from '../components/Sprint/SprintTaskModal';
+import fakeDataSprint from '../fakeData/sprintTasks.json';
 
 const wait = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 
 const TasksScreen = () => {
   const [refreshing, setRefreshing] = React.useState(false);
-  const [data, setData] = useState([{
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: '1 Item'
-  }]);
+  const [data, setData] = useState(fakeDataSprint);
+  const [openTaskId, setOpenTaskId] = useState(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     wait(100).then(() => {
       const currentData = [...data];
 
-      const newItem = {
-        id: `${Math.random(0, 1000)}fdfdfdfd.fdf${Math.random(0, 1000)}244343`,
-        title: `${currentData.length + 1} item`
-      };
-      setData([...currentData, newItem]);
+      //const newData = fetch();
+
+      setData([...currentData]);
       setRefreshing(false);
     });
   }, [data]);
 
   const renderItem = ({ item }) => (
-    <Item title={item.title} />
+    <SprintTask
+      title={item.key}
+      status={item.status}
+      desc={item.description}
+      type={item.type}
+      id={item.id}
+      component={item.component}
+      setOpenTaskId={setOpenTaskId}
+      openModal={setIsTaskModalOpen}
+    />
   );
 
   return (
     <View style={styles.container}>
+      <SprintTaskModal
+        modalHandler={setIsTaskModalOpen}
+        isVisible={isTaskModalOpen}
+        taskId={openTaskId}
+      />
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -65,14 +70,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff'
   },
-  item: {
-    backgroundColor: '#b9d7fa',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16
-  },
-  title: {
-    fontSize: 32
+  modal: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

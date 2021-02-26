@@ -1,0 +1,24 @@
+[
+  {
+    "id": "445015",
+    "selfLink": "https: //www.atlassian.com",
+    "key": "BE-435",
+    "description": "Integrate new concept of search",
+    "status": "In progress",
+    "reporter": "E.Viskov",
+    "assignee": "Gleb Urentsev",
+    "component": "Corp site",
+    "type": "task"
+  },
+  {
+    "id": "445016",
+    "selfLink": "https: //www.atlassian.com",
+    "key": "BE-436",
+    "description": "Fix block width on page",
+    "status": "New",
+    "reporter": "E.Viskov",
+    "assignee": "Gleb Urentsev",
+    "component": "Corp site",
+    "type": "Bug"
+  }
+]
