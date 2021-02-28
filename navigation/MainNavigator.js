@@ -7,6 +7,7 @@ import { createAppContainer } from 'react-navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import TasksScreen from '../screens/TasksScreen';
 import SprintScreen from '../screens/SprintScreen';
+import AnaliticsScreen from '../screens/AnaliticsScreen';
 
 const TasksNavigator = createStackNavigator(
   {
@@ -17,6 +18,12 @@ const TasksNavigator = createStackNavigator(
 const SprintNavigator = createStackNavigator(
   {
     Tasks: SprintScreen
+  }
+);
+
+const AnaliticsNavigator = createStackNavigator(
+  {
+    Analitics: AnaliticsScreen
   }
 );
 
@@ -41,6 +48,20 @@ const MainNavigator = createMaterialBottomTabNavigator({
       inactiveColor: '#3e2465',
       barStyle: { backgroundColor: '#009999' },
       tabBarIcon: ({ tintColor }) => <MaterialIcons name="add-task" size={24} color={tintColor} />
+    },
+    tabBarOptions: {
+      activeTintColor: '#cd077d'
+    }
+  },
+  Analitics: {
+    screen: AnaliticsNavigator,
+    navigationOptions: {
+      tabBarLabel: 'Аналитика',
+      title: 'Аналитика',
+      activeColor: '#f0edf6',
+      inactiveColor: '#3e2465',
+      barStyle: { backgroundColor: '#009999' },
+      tabBarIcon: ({ tintColor }) => <MaterialIcons name="analytics" size={24} color={tintColor} />
     },
     tabBarOptions: {
       activeTintColor: '#cd077d'

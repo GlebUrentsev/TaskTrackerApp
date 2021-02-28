@@ -1,13 +1,17 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Modal,
-  Button
+  Button,
+  Linking,
+  Image
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react/cjs/react.development';
+import { ScrollView } from 'react-native-gesture-handler';
 import fakeData from '../../fakeData/sprintTasks.json';
 
 const SprintTaskModal = ({ isVisible, modalHandler, taskId }) => {
@@ -25,25 +29,48 @@ const SprintTaskModal = ({ isVisible, modalHandler, taskId }) => {
           transparent
           visible={isVisible}
         >
-          <View style={styles.modal}>
-            <View style={styles.closeButton}>
-              <Button title="X" onPress={() => modalHandler()} />
-            </View>
-            <View style={styles.content}>
-              <View style={styles.details}>
-                <Text style={styles.datailsText}>Details</Text>
+          <ScrollView>
+            <View style={styles.modal}>
+              <View style={styles.closeButton}>
+                <Button title="X" onPress={() => modalHandler()} />
               </View>
-              <View style={styles.taskType}>
-                <Text style={styles.typeText}>{taskItem.type}</Text>
+              <View style={styles.content}>
+                <View style={styles.details}>
+                  <Text style={styles.datailsText}>Details</Text>
+                </View>
+
+                <View style={styles.key}>
+                  <Text style={styles.keyText}>{taskItem.key}</Text>
+                  <View style={styles.taskType}>
+                    <Text style={styles.typeText}>{taskItem.type}</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.simpleText}>Reporter: {taskItem.reporter}</Text>
+                <Text style={styles.simpleText}>Assignee: {taskItem.assignee}</Text>
+                <Text style={styles.simpleText}>Component: {taskItem.component}</Text>
+                <View style={styles.linkBlock}>
+                  <Text>Link:</Text>
+                  <Text
+                    style={{ color: 'blue', marginLeft: 10 }}
+                    onPress={() => Linking.openURL(taskItem.selfLink)}
+                  >
+                    {taskItem.selfLink}
+                  </Text>
+                </View>
+
+                <View style={styles.desc}>
+                  <Text style={styles.datailsText}>Description</Text>
+                </View>
+                <Text style={styles.fullDescription}>{taskItem.fullDescription}</Text>
+
+                <Image
+                  style={{ width: '95%', height: 500, marginVertical: 30 }}
+                  source={{ uri: 'https://instabug.com/blog/wp-content/uploads/2021/01/b_How-to-Write-a-Bug-Report-The-Ideal-Bug-Report-.png' }}
+                />
               </View>
-              <Text>{taskItem.key}</Text>
-              <Text>{taskItem.reporter}</Text>
-              <Text>{taskItem.assignee}</Text>
-              <Text>{taskItem.component}</Text>
-              <Text>{taskItem.selfLink}</Text>
-              <Text>{taskItem.fullDescription}</Text>
             </View>
-          </View>
+          </ScrollView>
         </Modal>
       ) : null
   );
@@ -68,12 +95,11 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     minHeight: 30,
-    marginTop: 20,
+    marginTop: 30,
     marginRight: 10,
     alignItems: 'flex-end'
   },
   content: {
-    marginTop: 10,
     marginLeft: 20
   },
   details: {
@@ -81,6 +107,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     maxWidth: 50,
     marginBottom: 10
+  },
+  linkBlock: {
+    marginVertical: 10,
+    flexDirection: 'row'
+  },
+  desc: {
+    borderBottomColor: '#000',
+    borderBottomWidth: 1,
+    maxWidth: 90,
+    marginTop: 20,
+    marginBottom: 10
+  },
+  key: {
+    marginVertical: 5,
+    flexDirection: 'row'
+  },
+  keyText: {
+    fontFamily: 'open-sans',
+    fontSize: 30
   },
   datailsText: {
     fontFamily: 'open-sans-bold'
@@ -91,11 +136,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 30,
-    padding: 5
+    padding: 5,
+    marginLeft: 10
   },
   typeText: {
     color: '#fff',
-    fontFamily: 'open-sans-bold'
+    fontFamily: 'open-sans-bold',
+    textTransform: 'uppercase'
+  },
+  fullDescription: {
+    fontFamily: 'open-sans'
+  },
+  simpleText: {
+    marginVertical: 5,
+    fontFamily: 'open-sans',
+    fontSize: 20
+  },
+  tinyLogo: {
+    width: '80%',
+    height: 'auto'
   }
 });
 
