@@ -3,8 +3,7 @@ import {
   StyleSheet,
   View,
   FlatList,
-  RefreshControl,
-  Button
+  RefreshControl
 } from 'react-native';
 import SprintTask from '../components/Sprint/SprintTask';
 import SprintTaskModal from '../components/Sprint/SprintTaskModal';
