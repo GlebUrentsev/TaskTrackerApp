@@ -33,28 +33,26 @@ const SprintTask = ({
         setOpenTaskId(id);
         openModal(true);
       }}
-    >
-      <View style={{
+      style={{
         ...styles.item,
         backgroundColor: backgroudColor
       }}
-      >
-        <View style={styles.taskBlock}>
-          <Text style={type === 'task' ? styles.task : styles.bug}>{type}</Text>
-        </View>
-        <View>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-        <View>
-          <Text style={styles.desc}>{desc}</Text>
-        </View>
-        <View>
-          <Text style={styles.component}>{`Component: ${component}`}</Text>
-        </View>
-        <View style={styles.statusLabel}>
-          <Text style={styles.status}>Status:</Text>
-          <Text>{status}</Text>
-        </View>
+    >
+      <View style={styles.taskBlock}>
+        <Text style={type === 'task' ? styles.task : styles.bug}>{type}</Text>
+      </View>
+      <View>
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      <View>
+        <Text style={styles.desc}>{desc}</Text>
+      </View>
+      <View>
+        <Text style={styles.component}>{`Component: ${component}`}</Text>
+      </View>
+      <View style={styles.statusLabel}>
+        <Text style={styles.status}>Status:</Text>
+        <Text>{status}</Text>
       </View>
     </TouchableOpacity>
   );

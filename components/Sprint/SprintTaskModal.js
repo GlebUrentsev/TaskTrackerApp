@@ -32,7 +32,7 @@ const SprintTaskModal = ({ isVisible, modalHandler, taskId }) => {
           <ScrollView>
             <View style={styles.modal}>
               <View style={styles.closeButton}>
-                <Button title="X" onPress={() => modalHandler()} />
+                <Button title="← Back" onPress={() => modalHandler()} />
               </View>
               <View style={styles.content}>
                 <View style={styles.details}>
@@ -95,9 +95,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     minHeight: 30,
-    marginTop: 30,
+    marginTop: 40,
+    marginBottom: 10,
+    marginLeft: 15,
+    paddingLeft: 0,
     marginRight: 10,
-    alignItems: 'flex-end'
+    alignItems: 'flex-start'
   },
   content: {
     marginLeft: 20
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
   details: {
     borderBottomColor: '#000',
     borderBottomWidth: 1,
-    maxWidth: 50,
+    maxWidth: 80,
     marginBottom: 10
   },
   linkBlock: {
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
   desc: {
     borderBottomColor: '#000',
     borderBottomWidth: 1,
-    maxWidth: 90,
+    maxWidth: 120,
     marginTop: 20,
     marginBottom: 10
   },
@@ -128,6 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 30
   },
   datailsText: {
+    fontSize: 20,
     fontFamily: 'open-sans-bold'
   },
   taskType: {
