@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,10 +7,10 @@ import {
   Modal,
   Button,
   Linking,
-  Image
+  Image,
+  Dimensions
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react/cjs/react.development';
 import { ScrollView } from 'react-native-gesture-handler';
 import fakeData from '../../fakeData/sprintTasks.json';
 
@@ -91,7 +91,9 @@ SprintTaskModal.defaultProps = {
 const styles = StyleSheet.create({
   modal: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height
   },
   closeButton: {
     minHeight: 30,

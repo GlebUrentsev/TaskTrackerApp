@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react';
 import {
   StyleSheet,
@@ -5,29 +6,48 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
+import PropTypes from 'prop-types';
 
-const Task = () => (
+const Task = ({
+  title,
+  desc,
+  timeStart,
+  timeEnd,
+  goal,
+  place,
+  type,
+  openModal,
+  setOpenTaskId,
+  id
+}) => (
   <TouchableOpacity
     activeOpacity={0.6}
     style={{
       ...styles.item,
       backgroundColor: '#fff'
     }}
+    onPress={() => {
+      setOpenTaskId(id);
+      openModal(true);
+    }}
   >
     <View style={styles.taskBlock}>
-      <Text style={styles.task}>Type</Text>
+      <Text style={styles.task}>{type}</Text>
     </View>
     <View>
-      <Text style={styles.title}>Title</Text>
+      <Text style={styles.title}>{title}</Text>
     </View>
     <View>
-      <Text style={styles.desc}>Desc</Text>
+      <Text style={styles.desc}>{desc}</Text>
     </View>
     <View>
-      <Text style={styles.component}>Due date: smth</Text>
+      <Text style={styles.desc}>Место: {place}</Text>
+    </View>
+    <View>
+      <Text style={styles.component}>Due date: C {timeStart} до {timeEnd}</Text>
     </View>
     <View style={styles.statusLabel}>
-      <Text style={styles.status}>Goal:</Text>
+      <Text style={styles.status}>Goal: {goal}</Text>
       <Text>status</Text>
     </View>
   </TouchableOpacity>
@@ -85,5 +105,31 @@ const styles = StyleSheet.create({
     marginRight: 7
   }
 });
+
+Task.propTypes = {
+  title: PropTypes.string,
+  desc: PropTypes.string,
+  type: PropTypes.string,
+  id: PropTypes.string,
+  timeStart: PropTypes.string,
+  timeEnd: PropTypes.string,
+  goal: PropTypes.string,
+  place: PropTypes.string,
+  openModal: PropTypes.func,
+  setOpenTaskId: PropTypes.func
+};
+
+Task.defaultProps = {
+  title: 'unset',
+  desc: 'unset',
+  type: 'unset',
+  id: 'unset',
+  timeStart: 'unset',
+  timeEnd: 'unset',
+  goal: 'unset',
+  place: 'unset',
+  openModal: () => { },
+  setOpenTaskId: () => { }
+};
 
 export default Task;

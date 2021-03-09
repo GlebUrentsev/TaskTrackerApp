@@ -1,16 +1,21 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Button,
   StyleSheet,
-  View
+  View,
+  FlatList,
+  RefreshControl
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
-import { ScrollView } from 'react-native-gesture-handler';
 import moment from 'moment';
 import 'moment/locale/ru';
 import Task from '../components/Tasks/Task';
+import TaskModal from '../components/Tasks/TaskModal';
+import fakeTasks from '../fakeData/tasksData.json';
+
+const wait = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 
 const TasksScreen = props => {
   const { navigation } = props;
@@ -24,12 +29,56 @@ const TasksScreen = props => {
     navigation.setParams({ nextDay: `${+day + 1}` });
   }, []);
 
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [data, setData] = useState(fakeTasks);
+  const [openTaskId, setOpenTaskId] = useState(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(100).then(() => {
+      const currentData = [...data];
+
+      //const newData = fetch();
+
+      setData([...currentData]);
+      setRefreshing(false);
+    });
+  }, [data]);
+
+  const renderItem = ({ item }) => (
+    <Task
+      title={item.title}
+      desc={item.description}
+      type={item.type}
+      timeStart={item.timeStart}
+      timeEnd={item.timeEnd}
+      goal={item.goal}
+      place={item.place}
+      id={item.id}
+      setOpenTaskId={setOpenTaskId}
+      openModal={setIsTaskModalOpen}
+    />
+  );
+
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <Task />
-        <Task />
-      </ScrollView>
+      <TaskModal
+        modalHandler={setIsTaskModalOpen}
+        isVisible={isTaskModalOpen}
+        taskId={openTaskId}
+      />
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        refreshControl={(
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        )}
+      />
       <View style={styles.addButton}>
         <MaterialIcons name="add" size={24} color="#fff" onPress={() => { }} />
       </View>
