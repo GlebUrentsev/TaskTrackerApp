@@ -1,22 +1,27 @@
-[
-  {
-    "id": "445015",
-    "title": "Integrate new concept of search",
-    "description": "Добавить страницу поиска, изменить текущий дизайн на главной странице ...",
-    "timeStart": "9 Марта 2021",
-    "timeEnd": "11 Марта 2021",
-    "type": "task",
-    "place": "Office",
-    "goal": ""
-  },
-  {
-    "id": "434343",
-    "title": "Gleb / Artem",
-    "description": "Добавить страницу поиска, изменить текущий дизайн на главной странице ...",
-    "timeStart": "9 Марта 2021",
-    "timeEnd": "11 Марта 2021",
-    "type": "meet",
-    "place": "Office",
-    "goal": ""
-  }
-]
+{
+  "id": "134",
+  "taskList": [
+    {
+      "id": "445015",
+      "data": "13.03.2021",
+      "title": "Integrate new concept of search",
+      "description": "Добавить страницу поиска, изменить текущий дизайн на главной странице",
+      "timeStart": "10.00",
+      "timeEnd": "11.00",
+      "type": "task",
+      "place": "Office",
+      "goal": ""
+    },
+    {
+      "id": "434343",
+      "data": "13.03.2021",
+      "title": "Gleb / Artem",
+      "description": "Добавить страницу поиска, изменить текущий дизайн на главной странице",
+      "timeStart": "14.00",
+      "timeEnd": "15.00",
+      "type": "meet",
+      "place": "Office",
+      "goal": ""
+    }
+  ]
+}

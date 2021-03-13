@@ -12,27 +12,26 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import 'moment/locale/ru';
 import Task from '../components/Tasks/Task';
-import TaskModal from '../components/Tasks/TaskModal';
+import EditTaskModal from '../components/Tasks/EditTaskModal';
 import fakeTasks from '../fakeData/tasksData.json';
 
 const wait = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 
 const TasksScreen = props => {
   const { navigation } = props;
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [data, setData] = useState(fakeTasks.taskList);
+  const [openTaskId, setOpenTaskId] = useState(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   useEffect(() => {
     const day = moment().format('D');
-    const month = moment().format('MMMM');
+    const fullDate = moment().format('LL');
 
-    navigation.setParams({ currentDay: `${day} ${month}` });
+    navigation.setParams({ currentDay: `${fullDate}` });
     navigation.setParams({ prevDay: `${day - 1}` });
     navigation.setParams({ nextDay: `${+day + 1}` });
   }, []);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [data, setData] = useState(fakeTasks);
-  const [openTaskId, setOpenTaskId] = useState(null);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -63,7 +62,7 @@ const TasksScreen = props => {
 
   return (
     <View style={styles.container}>
-      <TaskModal
+      <EditTaskModal
         modalHandler={setIsTaskModalOpen}
         isVisible={isTaskModalOpen}
         taskId={openTaskId}
