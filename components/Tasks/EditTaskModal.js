@@ -13,7 +13,8 @@ import {
 import PropTypes from 'prop-types';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
-import fakeData from '../../fakeData/tasksData.json';
+import { fetchTasks } from '../../api/taskApi';
+import formatDate from '../../api/helpers';
 
 const EditTaskModal = ({
   isVisible,
@@ -25,13 +26,19 @@ const EditTaskModal = ({
   const [date, changeDate] = React.useState('');
 
   useEffect(() => {
-    const returnedItem = fakeData.taskList.find(item => item.id === taskId);
+    fetchTasks().then(result => {
+      const itemById = result.filter(item => item._id === taskId)[0];
 
-    if (returnedItem) {
-      setTaskItem(returnedItem);
-      changeTitle(returnedItem.title);
-      changeDate(returnedItem.data);
-    }
+      if (itemById) {
+        setTaskItem(itemById);
+        changeTitle(itemById.title);
+        changeDate(formatDate(new Date(itemById.taskDate)));
+      }
+    });
+
+    return () => {
+      setTaskItem(null);
+    };
   }, [taskId]);
 
   return (
@@ -110,7 +117,7 @@ const EditTaskModal = ({
                           <TextInput
                             editable={false}
                             onChangeText={text => { }}
-                            value={taskItem.timeStart}
+                            value={taskItem.timeEnd}
                             style={styles.timeInput}
                           />
                         </View>
@@ -210,14 +217,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    height: Dimensions.get('window').height - 80
+    justifyContent: 'space-between'
   },
   firstSection: {
-    marginHorizontal: 20
+    marginHorizontal: 20,
+    marginBottom: 50
   },
   secondSection: {
-    height: '70%',
     backgroundColor: '#fff',
     borderTopRightRadius: 40,
     borderTopLeftRadius: 40,

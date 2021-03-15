@@ -5,7 +5,8 @@ import {
   StyleSheet,
   View,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
@@ -13,16 +14,27 @@ import moment from 'moment';
 import 'moment/locale/ru';
 import Task from '../components/Tasks/Task';
 import EditTaskModal from '../components/Tasks/EditTaskModal';
-import fakeTasks from '../fakeData/tasksData.json';
-
-const wait = timeout => new Promise(resolve => setTimeout(resolve, timeout));
+import { fetchTasks } from '../api/taskApi';
+import formatDate from '../api/helpers';
 
 const TasksScreen = props => {
   const { navigation } = props;
   const [refreshing, setRefreshing] = React.useState(false);
-  const [data, setData] = useState(fakeTasks.taskList);
+  const [data, setData] = useState(null);
   const [openTaskId, setOpenTaskId] = useState(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [currentDate, setCurrentDate] = useState(moment().format('l'));
+
+  const addDayToCurDate = useCallback(() => {
+    const tomorrow = moment(currentDate.replace('.', ''), 'DDMMYYYY').add(1, 'days').format('l');
+    setCurrentDate(tomorrow);
+  }, [currentDate]);
+
+  const removeDayToCurDate = useCallback(() => {
+    const yesterday = moment(currentDate.replace('.', ''), 'DDMMYYYY').subtract(1, 'days').format('l');
+    setCurrentDate(yesterday);
+  }, [currentDate]);
 
   useEffect(() => {
     const day = moment().format('D');
@@ -31,16 +43,43 @@ const TasksScreen = props => {
     navigation.setParams({ currentDay: `${fullDate}` });
     navigation.setParams({ prevDay: `${day - 1}` });
     navigation.setParams({ nextDay: `${+day + 1}` });
-  }, []);
+    navigation.setParams({ addDay: addDayToCurDate });
+    navigation.setParams({ removeDay: removeDayToCurDate });
+
+    setIsFetching(true);
+    fetchTasks().then(result => {
+      const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
+      setData(filterByDateItems);
+      setIsFetching(false);
+    });
+
+    return () => {
+      setData(null);
+    };
+  }, [addDayToCurDate, removeDayToCurDate]);
+
+  useEffect(() => {
+    setIsFetching(true);
+
+    const dayNew = moment(currentDate.replace('.', ''), 'DDMMYYYY').format('D');
+    const fullDateNew = moment(currentDate.replace('.', ''), 'DDMMYYYY').format('LL');
+
+    navigation.setParams({ currentDay: `${fullDateNew}` });
+    navigation.setParams({ prevDay: `${dayNew - 1}` });
+    navigation.setParams({ nextDay: `${+dayNew + 1}` });
+
+    fetchTasks().then(result => {
+      const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
+      setData(filterByDateItems);
+      setIsFetching(false);
+    });
+  }, [currentDate, addDayToCurDate, removeDayToCurDate]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    wait(100).then(() => {
-      const currentData = [...data];
-
-      //const newData = fetch();
-
-      setData([...currentData]);
+    fetchTasks().then(result => {
+      const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
+      setData(filterByDateItems);
       setRefreshing(false);
     });
   }, [data]);
@@ -54,34 +93,41 @@ const TasksScreen = props => {
       timeEnd={item.timeEnd}
       goal={item.goal}
       place={item.place}
-      id={item.id}
+      id={item._id}
       setOpenTaskId={setOpenTaskId}
       openModal={setIsTaskModalOpen}
     />
   );
 
   return (
-    <View style={styles.container}>
-      <EditTaskModal
-        modalHandler={setIsTaskModalOpen}
-        isVisible={isTaskModalOpen}
-        taskId={openTaskId}
-      />
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        refreshControl={(
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
+    !isFetching
+      ? (
+        <View style={styles.container}>
+          <EditTaskModal
+            modalHandler={setIsTaskModalOpen}
+            isVisible={isTaskModalOpen}
+            taskId={openTaskId}
           />
-        )}
-      />
-      <View style={styles.addButton}>
-        <MaterialIcons name="add" size={24} color="#fff" onPress={() => { }} />
-      </View>
-    </View>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={item => item._id}
+            refreshControl={(
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            )}
+          />
+          <View style={styles.addButton}>
+            <MaterialIcons name="add" size={24} color="#fff" onPress={() => { }} />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.containerNoData}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      )
   );
 };
 
@@ -92,7 +138,7 @@ TasksScreen.navigationOptions = navData => ({
     <View style={{ paddingLeft: 20 }}>
       <Button
         title={`${navData.navigation.getParam('prevDay')}`}
-        onPress={() => console.log('prev')}
+        onPress={navData.navigation.getParam('removeDay')}
       />
     </View>
   ),
@@ -100,7 +146,7 @@ TasksScreen.navigationOptions = navData => ({
     <View style={{ paddingRight: 20 }}>
       <Button
         title={`${navData.navigation.getParam('nextDay')}`}
-        onPress={() => console.log('next')}
+        onPress={navData.navigation.getParam('addDay')}
       />
     </View>
   )
@@ -110,6 +156,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff'
+  },
+  containerNoData: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   addButton: {
     position: 'absolute',

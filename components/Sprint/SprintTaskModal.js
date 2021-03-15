@@ -92,8 +92,7 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     backgroundColor: '#fff',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height + 50
+    width: Dimensions.get('window').width
   },
   closeButton: {
     minHeight: 30,
