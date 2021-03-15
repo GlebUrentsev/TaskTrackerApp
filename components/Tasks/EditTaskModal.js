@@ -26,10 +26,11 @@ const EditTaskModal = ({
   const [date, changeDate] = React.useState('');
 
   useEffect(() => {
+    let cleanupFunction = false;
     fetchTasks().then(result => {
       const itemById = result.filter(item => item._id === taskId)[0];
 
-      if (itemById) {
+      if (itemById && !cleanupFunction) {
         setTaskItem(itemById);
         changeTitle(itemById.title);
         changeDate(formatDate(new Date(itemById.taskDate)));
@@ -38,6 +39,7 @@ const EditTaskModal = ({
 
     return () => {
       setTaskItem(null);
+      cleanupFunction = true;
     };
   }, [taskId]);
 

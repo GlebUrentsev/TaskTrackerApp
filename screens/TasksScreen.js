@@ -6,7 +6,8 @@ import {
   View,
   FlatList,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  Text
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
@@ -37,28 +38,7 @@ const TasksScreen = props => {
   }, [currentDate]);
 
   useEffect(() => {
-    const day = moment().format('D');
-    const fullDate = moment().format('LL');
-
-    navigation.setParams({ currentDay: `${fullDate}` });
-    navigation.setParams({ prevDay: `${day - 1}` });
-    navigation.setParams({ nextDay: `${+day + 1}` });
-    navigation.setParams({ addDay: addDayToCurDate });
-    navigation.setParams({ removeDay: removeDayToCurDate });
-
-    setIsFetching(true);
-    fetchTasks().then(result => {
-      const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
-      setData(filterByDateItems);
-      setIsFetching(false);
-    });
-
-    return () => {
-      setData(null);
-    };
-  }, [addDayToCurDate, removeDayToCurDate]);
-
-  useEffect(() => {
+    let cleanupFunction = false;
     setIsFetching(true);
 
     const dayNew = moment(currentDate.replace('.', ''), 'DDMMYYYY').format('D');
@@ -67,12 +47,21 @@ const TasksScreen = props => {
     navigation.setParams({ currentDay: `${fullDateNew}` });
     navigation.setParams({ prevDay: `${dayNew - 1}` });
     navigation.setParams({ nextDay: `${+dayNew + 1}` });
+    navigation.setParams({ addDay: addDayToCurDate });
+    navigation.setParams({ removeDay: removeDayToCurDate });
 
     fetchTasks().then(result => {
       const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
-      setData(filterByDateItems);
-      setIsFetching(false);
+
+      if (!cleanupFunction) {
+        setData(filterByDateItems);
+        setIsFetching(false);
+      }
     });
+
+    return () => {
+      cleanupFunction = true;
+    };
   }, [currentDate, addDayToCurDate, removeDayToCurDate]);
 
   const onRefresh = useCallback(() => {
@@ -99,31 +88,35 @@ const TasksScreen = props => {
     />
   );
 
+  const content = !data?.length > 0
+    ? <View style={{ ...styles.container, justifyContent: 'center', alignItems: 'center' }}><Text>Задач нет</Text></View>
+    : (
+      <View style={styles.container}>
+        <EditTaskModal
+          modalHandler={setIsTaskModalOpen}
+          isVisible={isTaskModalOpen}
+          taskId={openTaskId}
+        />
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={item => item._id}
+          refreshControl={(
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          )}
+        />
+        <View style={styles.addButton}>
+          <MaterialIcons name="add" size={24} color="#fff" onPress={() => { }} />
+        </View>
+      </View>
+    );
+
   return (
     !isFetching
-      ? (
-        <View style={styles.container}>
-          <EditTaskModal
-            modalHandler={setIsTaskModalOpen}
-            isVisible={isTaskModalOpen}
-            taskId={openTaskId}
-          />
-          <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={item => item._id}
-            refreshControl={(
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-              />
-            )}
-          />
-          <View style={styles.addButton}>
-            <MaterialIcons name="add" size={24} color="#fff" onPress={() => { }} />
-          </View>
-        </View>
-      ) : (
+      ? content : (
         <View style={styles.containerNoData}>
           <ActivityIndicator size="large" color="#000" />
         </View>
