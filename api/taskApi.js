@@ -90,11 +90,53 @@ const updateSprintAnalitics = async (userId = '604e5f771c7cc13294faccba', quater
   return response.status;
 };
 
+const createOverWork = async (
+  date,
+  hours,
+  userId = '604e5f771c7cc13294faccba'
+) => {
+  const response = await fetch(`https://pure-oasis-02983.herokuapp.com/create_overwork_item/${userId}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      date,
+      hours
+    })
+  });
+
+  return response.status;
+};
+
+const deleteOverWork = async (
+  date,
+  hours,
+  userId = '604e5f771c7cc13294faccba'
+) => {
+  const response = await fetch(`https://pure-oasis-02983.herokuapp.com/delete_overwork_item/${userId}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      date,
+      hours
+    })
+  });
+
+  return response.status;
+};
+
 export {
   fetchTasks,
   deleteTaskById,
   updateTaskById,
   createTask,
   getAllAnalitics,
-  updateSprintAnalitics
+  updateSprintAnalitics,
+  createOverWork,
+  deleteOverWork
 };

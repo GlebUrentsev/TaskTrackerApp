@@ -17,7 +17,7 @@ import { TextInput } from 'react-native-paper';
 import Task from '../components/Tasks/Task';
 import EditTaskModal from '../components/Tasks/EditTaskModal';
 import AddTaskModal from '../components/Tasks/AddTaskModal';
-import { fetchTasks } from '../api/taskApi';
+import { fetchTasks, createOverWork, deleteOverWork } from '../api/taskApi';
 import formatDate from '../api/helpers';
 
 const TasksScreen = props => {
@@ -27,9 +27,24 @@ const TasksScreen = props => {
   const [firstData, setFirstData] = useState(null);
   const [openTaskId, setOpenTaskId] = useState(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isOverWorkDay, setIsOverWorkDay] = useState(false);
   const [newTaskModal, setNewTaskModal] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [currentDate, setCurrentDate] = useState(moment().format('l'));
+
+  const countTaskHours = arrayOfItems => {
+    let hours = 0;
+
+    arrayOfItems.map(item => {
+      // hours += item.timeEnd - item.timeStart
+      const valuestart = moment.duration(item.timeStart.replace('.', ':'), 'HH:mm');
+      const valuestop = moment.duration(item.timeEnd.replace('.', ':'), 'HH:mm');
+      hours += valuestop.subtract(valuestart).hours();
+      return item;
+    });
+
+    return hours;
+  };
 
   const validateDate = date => {
     let result = '';
@@ -94,11 +109,19 @@ const TasksScreen = props => {
 
       if (!cleanupFunction) {
         setData(filterByDateItems);
+
+        const hoursSum = countTaskHours(filterByDateItems);
+        if (hoursSum > 8) {
+          createOverWork(`${currentDate.split('.')[2]},${currentDate.split('.')[1]},${currentDate.split('.')[0]}`, hoursSum);
+          setIsOverWorkDay(true);
+        } else {
+          deleteOverWork(`${currentDate.split('.')[2]},${currentDate.split('.')[1]},${currentDate.split('.')[0]}`, hoursSum);
+          setIsOverWorkDay(false);
+        }
         setFirstData(filterByDateItems);
         setIsFetching(false);
       }
     });
-
     return () => {
       cleanupFunction = true;
     };
@@ -107,7 +130,16 @@ const TasksScreen = props => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchTasks().then(result => {
-      const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
+      const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))} ` === `${currentDate} `);
+
+      const hoursSum = countTaskHours(filterByDateItems);
+      if (hoursSum > 8) {
+        createOverWork(`${currentDate.split('.')[2]},${currentDate.split('.')[1]},${currentDate.split('.')[0]}`, hoursSum);
+        setIsOverWorkDay(true);
+      } else {
+        deleteOverWork(`${currentDate.split('.')[2]},${currentDate.split('.')[1]},${currentDate.split('.')[0]}`, hoursSum);
+        setIsOverWorkDay(false);
+      }
       setData(filterByDateItems);
       setFirstData(filterByDateItems);
       setRefreshing(false);
@@ -156,6 +188,7 @@ const TasksScreen = props => {
           }}
           onChangeText={text => searchFilters(text)}
         />
+        {isOverWorkDay ? <Text style={{ color: 'red', textAlign: 'center' }}>День превыщает норму рабочего времени</Text> : null}
         <FlatList
           data={data}
           renderItem={renderItem}
@@ -189,7 +222,7 @@ TasksScreen.navigationOptions = navData => ({
   headerLeft: () => (
     <View style={{ paddingLeft: 20 }}>
       <Button
-        title={`${navData.navigation.getParam('prevDay')}`}
+        title={`${navData.navigation.getParam('prevDay')} `}
         onPress={navData.navigation.getParam('removeDay')}
       />
     </View>
@@ -197,7 +230,7 @@ TasksScreen.navigationOptions = navData => ({
   headerRight: () => (
     <View style={{ paddingRight: 20 }}>
       <Button
-        title={`${navData.navigation.getParam('nextDay')}`}
+        title={`${navData.navigation.getParam('nextDay')} `}
         onPress={navData.navigation.getParam('addDay')}
       />
     </View>
