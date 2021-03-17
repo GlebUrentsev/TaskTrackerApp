@@ -18,7 +18,7 @@ const SprintTaskModal = ({ isVisible, modalHandler, taskId }) => {
   const [taskItem, setTaskItem] = useState(null);
 
   useEffect(() => {
-    setTaskItem(fakeData.find(item => item.id === taskId));
+    setTaskItem(fakeData.items.find(item => item.id === taskId));
   }, [taskId]);
 
   return (

@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import moment, { min } from 'moment';
 import 'moment/locale/ru';
 import Task from '../components/Tasks/Task';
 import EditTaskModal from '../components/Tasks/EditTaskModal';
+import AddTaskModal from '../components/Tasks/AddTaskModal';
 import { fetchTasks } from '../api/taskApi';
 import formatDate from '../api/helpers';
 
@@ -24,29 +25,52 @@ const TasksScreen = props => {
   const [data, setData] = useState(null);
   const [openTaskId, setOpenTaskId] = useState(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [newTaskModal, setNewTaskModal] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [currentDate, setCurrentDate] = useState(moment().format('l'));
 
+  const validateDate = date => {
+    let result = '';
+    const day = date.split('.')[0];
+    const month = date.split('.')[1];
+    const year = date.split('.')[2];
+
+    if (day < 10) {
+      result += `0${day}.`;
+    } else {
+      result += `${day}.`;
+    }
+
+    if (month < 10) {
+      result += `0${month}.`;
+    } else {
+      result += `${month}.`;
+    }
+
+    result += year;
+
+    return result;
+  };
   const addDayToCurDate = useCallback(() => {
-    const tomorrow = moment(currentDate.replace('.', ''), 'DDMMYYYY').add(1, 'days').format('l');
+    const tomorrow = moment(validateDate(currentDate).replace('.', ''), 'DDMMYYYY').add(1, 'days').format('l');
     setCurrentDate(tomorrow);
   }, [currentDate]);
 
   const removeDayToCurDate = useCallback(() => {
-    const yesterday = moment(currentDate.replace('.', ''), 'DDMMYYYY').subtract(1, 'days').format('l');
+    const yesterday = moment(validateDate(currentDate).replace('.', ''), 'DDMMYYYY').subtract(1, 'days').format('l');
     setCurrentDate(yesterday);
   }, [currentDate]);
 
   useEffect(() => {
     let cleanupFunction = false;
     setIsFetching(true);
-
-    const dayNew = moment(currentDate.replace('.', ''), 'DDMMYYYY').format('D');
-    const fullDateNew = moment(currentDate.replace('.', ''), 'DDMMYYYY').format('LL');
+    const fullDateNew = moment(validateDate(currentDate).replace('.', ''), 'DDMMYYYY').format('LL');
+    const plusDay = moment(validateDate(currentDate).replace('.', ''), 'DDMMYYYY').add(1, 'days').format('D');
+    const minusDay = moment(validateDate(currentDate).replace('.', ''), 'DDMMYYYY').subtract(1, 'days').format('D');
 
     navigation.setParams({ currentDay: `${fullDateNew}` });
-    navigation.setParams({ prevDay: `${dayNew - 1}` });
-    navigation.setParams({ nextDay: `${+dayNew + 1}` });
+    navigation.setParams({ prevDay: `${minusDay}` });
+    navigation.setParams({ nextDay: `${plusDay}` });
     navigation.setParams({ addDay: addDayToCurDate });
     navigation.setParams({ removeDay: removeDayToCurDate });
 
@@ -98,6 +122,11 @@ const TasksScreen = props => {
           isVisible={isTaskModalOpen}
           taskId={openTaskId}
         />
+        <AddTaskModal
+          modalHandler={setNewTaskModal}
+          afterRemoveUpdate={onRefresh}
+          isVisible={newTaskModal}
+        />
         <FlatList
           data={data}
           renderItem={renderItem}
@@ -110,7 +139,7 @@ const TasksScreen = props => {
           )}
         />
         <View style={styles.addButton}>
-          <MaterialIcons name="add" size={24} color="#fff" onPress={() => { }} />
+          <MaterialIcons name="add" size={24} color="#fff" onPress={() => setNewTaskModal(!newTaskModal)} />
         </View>
       </View>
     );

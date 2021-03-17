@@ -66,6 +66,7 @@ const EditTaskModal = ({
     changeDate(formatDate(new Date(taskItem.taskDate)));
     setTimeStart(taskItem.timeStart);
     setTimeEnd(taskItem.timeEnd);
+    setIsActive(taskItem.type);
     setDescription(taskItem.description);
 
     setEditDescription(false);
@@ -165,6 +166,7 @@ const EditTaskModal = ({
                   <View style={{ ...styles.titleSection, ...styles.dateInput }}>
                     <TextInput
                       editable={editDate}
+                      placeholder="dd,mm,yyy"
                       onChangeText={text => changeDate(text)}
                       value={date}
                       style={!editDate
@@ -188,6 +190,7 @@ const EditTaskModal = ({
                         <View>
                           <Text style={styles.timeText}>Start</Text>
                           <TextInput
+                            placeholder="00.00"
                             editable={editTimeStart}
                             onChangeText={text => setTimeStart(text)}
                             value={timeStart}
@@ -210,6 +213,7 @@ const EditTaskModal = ({
                         <View>
                           <Text style={styles.timeText}>End</Text>
                           <TextInput
+                            placeholder="00.00"
                             editable={editTimeEnd}
                             onChangeText={text => setTimeEnd(text)}
                             value={timeEnd}

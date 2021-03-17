@@ -69,4 +69,14 @@ const MainNavigator = createMaterialBottomTabNavigator({
   }
 });
 
-export default createAppContainer(MainNavigator);
+const initNavigator = createStackNavigator(
+  {
+    Main: {
+      screen: MainNavigator,
+      navigationOptions: {
+        headerShown: false
+      }
+    }
+  }
+);
+export default createAppContainer(initNavigator);

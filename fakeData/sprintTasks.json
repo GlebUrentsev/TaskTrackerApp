@@ -1,26 +1,41 @@
-[
-  {
-    "id": "445015",
-    "selfLink": "https: //www.atlassian.com",
-    "key": "BE-435",
-    "description": "Integrate new concept of search",
-    "fullDescription": "Добавить страницу поиска, изменить текущий дизайн на главной странице ...",
-    "status": "In progress",
-    "reporter": "E.Viskov",
-    "assignee": "Gleb Urentsev",
-    "component": "Corp site",
-    "type": "task"
-  },
-  {
-    "id": "445016",
-    "selfLink": "https: //www.atlassian.com",
-    "key": "BE-436",
-    "description": "Fix block width on page",
-    "fullDescription": "Исправить поведение блока на главной странице при разрешении меньше 500",
-    "status": "New",
-    "reporter": "E.Viskov",
-    "assignee": "Gleb Urentsev",
-    "component": "Corp site",
-    "type": "Bug"
-  }
-]
+{ 
+  "quater" : "Q 1.5",
+  "items": [
+    {
+      "id": "445015",
+      "selfLink": "https: //www.atlassian.com",
+      "key": "BE-435",
+      "description": "Integrate new concept of search",
+      "fullDescription": "Добавить страницу поиска, изменить текущий дизайн на главной странице ...",
+      "status": "In progress",
+      "reporter": "E.Viskov",
+      "assignee": "Gleb Urentsev",
+      "component": "Corp site",
+      "type": "task"
+    },
+    {
+      "id": "445016",
+      "selfLink": "https: //www.atlassian.com",
+      "key": "BE-436",
+      "description": "Fix block width on page",
+      "fullDescription": "Исправить поведение блока на главной странице при разрешении меньше 500",
+      "status": "New",
+      "reporter": "E.Viskov",
+      "assignee": "Gleb Urentsev",
+      "component": "Corp site",
+      "type": "Bug"
+    },
+    {
+      "id": "445043",
+      "selfLink": "https: //www.atlassian.com",
+      "key": "BE-436",
+      "description": "Fix block width on page",
+      "fullDescription": "Исправить поведение блока на главной странице при разрешении меньше 500",
+      "status": "New",
+      "reporter": "E.Viskov",
+      "assignee": "Gleb Urentsev",
+      "component": "Corp site",
+      "type": "Bug"
+    }
+  ]
+}

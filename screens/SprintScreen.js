@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,26 +8,40 @@ import {
 import SprintTask from '../components/Sprint/SprintTask';
 import SprintTaskModal from '../components/Sprint/SprintTaskModal';
 import fakeDataSprint from '../fakeData/sprintTasks.json';
+import { updateSprintAnalitics } from '../api/taskApi';
 
 const wait = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 
 const TasksScreen = () => {
   const [refreshing, setRefreshing] = React.useState(false);
-  const [data, setData] = useState(fakeDataSprint);
+  const [data, setData] = useState(fakeDataSprint.items);
   const [openTaskId, setOpenTaskId] = useState(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    wait(100).then(() => {
+    wait(700).then(() => {
       const currentData = [...data];
 
       //const newData = fetch();
 
       setData([...currentData]);
+      updateSprintAnalitics(
+        '604e5f771c7cc13294faccba',
+        fakeDataSprint.quater.split('.')[0].replace(' ', '').toLocaleLowerCase(),
+        fakeDataSprint.items.length
+      );
       setRefreshing(false);
     });
   }, [data]);
+
+  useEffect(() => {
+    updateSprintAnalitics(
+      '604e5f771c7cc13294faccba',
+      fakeDataSprint.quater.split('.')[0].replace(' ', '').toLocaleLowerCase(),
+      fakeDataSprint.items.length
+    );
+  }, []);
 
   const renderItem = ({ item }) => (
     <SprintTask
@@ -79,7 +93,9 @@ const styles = StyleSheet.create({
 
 TasksScreen.navigationOptions = {
   headerTitle: 'Спринт',
-  headerTitleStyle: { alignSelf: 'center' }
+  headerTitleStyle: { alignSelf: 'center' },
+  headerBackTitleVisible: false,
+  headerBackImage: () => null
 };
 
 export default TasksScreen;
