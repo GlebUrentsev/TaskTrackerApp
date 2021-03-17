@@ -8,22 +8,34 @@ import {
   Button,
   Dimensions,
   TextInput,
-  Text
+  Text,
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { MaterialIcons } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
-import { fetchTasks } from '../../api/taskApi';
+import { fetchTasks, deleteTaskById, updateTaskById } from '../../api/taskApi';
 import formatDate from '../../api/helpers';
 
 const EditTaskModal = ({
   isVisible,
   modalHandler,
-  taskId
+  taskId,
+  afterRemoveUpdate
 }) => {
   const [taskItem, setTaskItem] = useState(null);
-  const [title, changeTitle] = React.useState('');
-  const [date, changeDate] = React.useState('');
+  const [title, changeTitle] = useState('');
+  const [date, changeDate] = useState('');
+  const [timeStart, setTimeStart] = useState('');
+  const [timeEnd, setTimeEnd] = useState('');
+  const [description, setDescription] = useState('');
+  const [isActive, setIsActive] = useState('');
+
+  const [isEditTitle, setIsEditTitle] = useState(false);
+  const [editDate, setEditDate] = useState(false);
+  const [editTimeStart, setEditTimeStart] = useState(false);
+  const [editTimeEnd, setEditTimeEnd] = useState(false);
+  const [editDescription, setEditDescription] = useState(false);
 
   useEffect(() => {
     let cleanupFunction = false;
@@ -32,16 +44,85 @@ const EditTaskModal = ({
 
       if (itemById && !cleanupFunction) {
         setTaskItem(itemById);
+        changeDate(itemById.taskDate);
         changeTitle(itemById.title);
+        setTimeStart(itemById.timeStart);
+        setTimeEnd(itemById.timeEnd);
+        setDescription(itemById.description);
+        setIsActive(itemById.type);
         changeDate(formatDate(new Date(itemById.taskDate)));
       }
     });
 
     return () => {
-      setTaskItem(null);
       cleanupFunction = true;
+      setTaskItem(null);
     };
   }, [taskId]);
+
+  const noSaveCleanUp = () => {
+    changeTitle(taskItem.title);
+    changeDate(taskItem.date);
+    changeDate(formatDate(new Date(taskItem.taskDate)));
+    setTimeStart(taskItem.timeStart);
+    setTimeEnd(taskItem.timeEnd);
+    setDescription(taskItem.description);
+
+    setEditDescription(false);
+    setIsEditTitle(false);
+    setEditDate(false);
+    setEditTimeStart(false);
+    setEditDescription(false);
+    setEditTimeEnd(false);
+    modalHandler();
+  };
+
+  const sumbitDeleteTask = async () => {
+    const resStatus = await deleteTaskById(taskId);
+    setEditDescription(false);
+    setIsEditTitle(false);
+    setEditDate(false);
+    setEditTimeStart(false);
+    setEditDescription(false);
+    setEditTimeEnd(false);
+
+    if (resStatus === 200) {
+      modalHandler();
+      afterRemoveUpdate();
+    }
+  };
+
+  const submitUpdateTask = async () => {
+    const parseDate = date.replace('.', ',').replace('.', ',');
+
+    const year = parseDate.split(',')[2];
+    const month = parseDate.split(',')[1] - 1;
+    const day = parseDate.split(',')[0];
+
+    const taskInfo = {
+      taskId,
+      taskDate: new Date(year, month, day),
+      title,
+      description,
+      timeStart,
+      timeEnd,
+      place: 'office',
+      type: 'task',
+      goal: ''
+    };
+    const responseStatus = await updateTaskById(taskInfo);
+    setEditDescription(false);
+    setIsEditTitle(false);
+    setEditDate(false);
+    setEditTimeStart(false);
+    setEditDescription(false);
+    setEditTimeEnd(false);
+
+    if (responseStatus === 200) {
+      modalHandler();
+      afterRemoveUpdate();
+    }
+  };
 
   return (
     taskItem
@@ -54,38 +135,48 @@ const EditTaskModal = ({
           <ScrollView>
             <View style={styles.modal}>
               <View style={styles.closeButton}>
-                <Button color="#fff" title="← Back" onPress={() => modalHandler()} />
+                <Button
+                  color="#fff"
+                  title="← Back"
+                  onPress={() => {
+                    noSaveCleanUp();
+                  }}
+                />
               </View>
               <View style={styles.content}>
                 <View style={styles.firstSection}>
                   <View style={styles.titleSection}>
                     <TextInput
-                      editable={false}
+                      editable={isEditTitle}
                       onChangeText={text => changeTitle(text)}
                       value={title}
-                      style={styles.titleInput}
+                      style={!isEditTitle
+                        ? styles.titleInput
+                        : { ...styles.titleInput, ...styles.isEditable }}
                     />
                     <MaterialIcons
                       style={styles.searchIcon}
                       name="edit"
                       size={24}
                       color="#fff"
-                      onPress={() => { }}
+                      onPress={() => setIsEditTitle(!isEditTitle)}
                     />
                   </View>
                   <View style={{ ...styles.titleSection, ...styles.dateInput }}>
                     <TextInput
-                      editable={false}
-                      onChangeText={text => changeTitle(text)}
+                      editable={editDate}
+                      onChangeText={text => changeDate(text)}
                       value={date}
-                      style={styles.titleInput}
+                      style={!editDate
+                        ? styles.titleInput
+                        : { ...styles.titleInput, ...styles.isEditable }}
                     />
                     <MaterialIcons
                       style={styles.searchIcon}
                       name="edit"
                       size={24}
                       color="#fff"
-                      onPress={() => { }}
+                      onPress={() => setEditDate(!editDate)}
                     />
                   </View>
                 </View>
@@ -97,10 +188,12 @@ const EditTaskModal = ({
                         <View>
                           <Text style={styles.timeText}>Start</Text>
                           <TextInput
-                            editable={false}
-                            onChangeText={text => { }}
-                            value={taskItem.timeStart}
-                            style={styles.timeInput}
+                            editable={editTimeStart}
+                            onChangeText={text => setTimeStart(text)}
+                            value={timeStart}
+                            style={!editTimeStart
+                              ? styles.timeInput
+                              : { ...styles.timeInput, ...styles.isEditable }}
                           />
                         </View>
                         <MaterialIcons
@@ -108,7 +201,7 @@ const EditTaskModal = ({
                           name="edit"
                           size={24}
                           color="#000"
-                          onPress={() => { }}
+                          onPress={() => setEditTimeStart(!editTimeStart)}
                         />
                       </View>
                     </View>
@@ -117,10 +210,12 @@ const EditTaskModal = ({
                         <View>
                           <Text style={styles.timeText}>End</Text>
                           <TextInput
-                            editable={false}
-                            onChangeText={text => { }}
-                            value={taskItem.timeEnd}
-                            style={styles.timeInput}
+                            editable={editTimeEnd}
+                            onChangeText={text => setTimeEnd(text)}
+                            value={timeEnd}
+                            style={!editTimeEnd
+                              ? styles.timeInput
+                              : { ...styles.timeInput, ...styles.isEditable }}
                           />
                         </View>
                         <MaterialIcons
@@ -128,7 +223,7 @@ const EditTaskModal = ({
                           name="edit"
                           size={24}
                           color="#000"
-                          onPress={() => { }}
+                          onPress={() => setEditTimeEnd(!editTimeEnd)}
                         />
                       </View>
                     </View>
@@ -137,50 +232,63 @@ const EditTaskModal = ({
                   <Text style={styles.descInput}>Description</Text>
                   <View style={{ ...styles.titleSection, marginLeft: 20, marginRight: 30 }}>
                     <TextInput
-                      editable={false}
-                      onChangeText={text => changeTitle(text)}
-                      value={taskItem.description}
+                      editable={editDescription}
+                      onChangeText={text => setDescription(text)}
+                      value={description}
                       multiline
-                      style={{
-                        borderBottomWidth: 1,
-                        borderBottomColor: 'grey',
-                        paddingBottom: 10,
-                        fontSize: 15,
-                        marginRight: 10,
-                        maxHeight: 100
-                      }}
+                      style={!editDescription
+                        ? styles.descInputStyle
+                        : { ...styles.descInputStyle, ...styles.isEditable }}
                     />
                     <MaterialIcons
                       style={styles.searchIcon}
                       name="edit"
                       size={24}
                       color="#000"
-                      onPress={() => { }}
+                      onPress={() => setEditDescription(!editDescription)}
                     />
                   </View>
 
                   <Text style={styles.descInput}>Category</Text>
                   <View style={styles.categoryBtns}>
-                    <View style={{ ...styles.catBtn, ...styles.active }}>
+                    <View
+                      style={isActive === 'meet' ? { ...styles.catBtn, ...styles.active } : { ...styles.catBtn }}
+                      onPress={() => { }}
+                    >
                       <Text>meet</Text>
                     </View>
-                    <View style={styles.catBtn}>
+                    <View
+                      style={isActive === 'task' ? { ...styles.catBtn, ...styles.active } : { ...styles.catBtn }}
+                      onPress={() => { }}
+                    >
                       <Text>task</Text>
                     </View>
-                    <View style={styles.catBtn}>
+                    <View
+                      style={isActive === 'event' ? { ...styles.catBtn, ...styles.active } : { ...styles.catBtn }}
+                      onPress={() => { }}
+                    >
                       <Text>event</Text>
                     </View>
-                    <View style={{ ...styles.catBtn, ...styles.lastBtn }}>
+                    <TouchableOpacity
+                      style={isActive === 'other' ? { ...styles.catBtn, ...styles.active } : { ...styles.catBtn }}
+                      onPress={() => { }}
+                    >
                       <Text>other</Text>
-                    </View>
+                    </TouchableOpacity>
                   </View>
 
-                  <View style={{ ...styles.catBtn, ...styles.save }}>
+                  <TouchableOpacity
+                    style={{ ...styles.catBtn, ...styles.save }}
+                    onPress={() => submitUpdateTask()}
+                  >
                     <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Save</Text>
-                  </View>
-                  <View style={{ ...styles.catBtn, ...styles.remove }}>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ ...styles.catBtn, ...styles.remove }}
+                    onPress={() => sumbitDeleteTask()}
+                  >
                     <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Remove task</Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -193,12 +301,14 @@ const EditTaskModal = ({
 EditTaskModal.propTypes = {
   isVisible: PropTypes.bool,
   modalHandler: PropTypes.func,
+  afterRemoveUpdate: PropTypes.func,
   taskId: PropTypes.string
 };
 
 EditTaskModal.defaultProps = {
   isVisible: false,
   modalHandler: () => { },
+  afterRemoveUpdate: () => { },
   taskId: ''
 };
 
@@ -206,7 +316,11 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     backgroundColor: '#5E3FF6',
-    width: Dimensions.get('window').width
+    width: Dimensions.get('window').width,
+    height: '100%'
+  },
+  isEditable: {
+    borderBottomColor: 'orange'
   },
   closeButton: {
     minHeight: 30,
@@ -217,7 +331,16 @@ const styles = StyleSheet.create({
     marginRight: 10,
     alignItems: 'flex-start'
   },
+  descInputStyle: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey',
+    paddingBottom: 10,
+    fontSize: 15,
+    marginRight: 10,
+    maxHeight: 100
+  },
   content: {
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between'
   },

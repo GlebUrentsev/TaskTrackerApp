@@ -94,6 +94,7 @@ const TasksScreen = props => {
       <View style={styles.container}>
         <EditTaskModal
           modalHandler={setIsTaskModalOpen}
+          afterRemoveUpdate={onRefresh}
           isVisible={isTaskModalOpen}
           taskId={openTaskId}
         />
