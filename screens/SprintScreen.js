@@ -5,6 +5,7 @@ import {
   FlatList,
   RefreshControl
 } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import SprintTask from '../components/Sprint/SprintTask';
 import SprintTaskModal from '../components/Sprint/SprintTaskModal';
 import fakeDataSprint from '../fakeData/sprintTasks.json';
@@ -23,7 +24,7 @@ const TasksScreen = () => {
     wait(700).then(() => {
       const currentData = [...data];
 
-      //const newData = fetch();
+      // const newData = fetch();
 
       setData([...currentData]);
       updateSprintAnalitics(
@@ -34,6 +35,20 @@ const TasksScreen = () => {
       setRefreshing(false);
     });
   }, [data]);
+
+  const searchFilters = text => {
+    const newData = data.filter(item => item.key.includes(text)
+      || item.description.includes(text)
+      || item.status.includes(text)
+      || item.component.includes(text)
+      || item.type.includes(text));
+
+    if (text.length > 0 && newData.length > 0) {
+      setData(newData);
+    } else {
+      setData(fakeDataSprint.items);
+    }
+  };
 
   useEffect(() => {
     updateSprintAnalitics(
@@ -62,6 +77,18 @@ const TasksScreen = () => {
         modalHandler={setIsTaskModalOpen}
         isVisible={isTaskModalOpen}
         taskId={openTaskId}
+      />
+      <TextInput
+        placeholder="Найти задачу"
+        style={{
+          marginHorizontal: 30,
+          marginVertical: 10,
+          paddingTop: 0,
+          maxHeight: 40,
+          backgroundColor: '#b7d9e2',
+          justifyContent: 'center'
+        }}
+        onChangeText={text => searchFilters(text)}
       />
       <FlatList
         data={data}

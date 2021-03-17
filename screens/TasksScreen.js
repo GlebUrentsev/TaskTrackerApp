@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
-import moment, { min } from 'moment';
+import moment from 'moment';
 import 'moment/locale/ru';
+import { TextInput } from 'react-native-paper';
 import Task from '../components/Tasks/Task';
 import EditTaskModal from '../components/Tasks/EditTaskModal';
 import AddTaskModal from '../components/Tasks/AddTaskModal';
@@ -23,6 +24,7 @@ const TasksScreen = props => {
   const { navigation } = props;
   const [refreshing, setRefreshing] = React.useState(false);
   const [data, setData] = useState(null);
+  const [firstData, setFirstData] = useState(null);
   const [openTaskId, setOpenTaskId] = useState(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [newTaskModal, setNewTaskModal] = useState(false);
@@ -50,6 +52,19 @@ const TasksScreen = props => {
     result += year;
 
     return result;
+  };
+
+  const searchFilters = text => {
+    const newData = data.filter(item => item.title.includes(text)
+      || item.description.includes(text)
+      || item.place.includes(text)
+      || item.type.includes(text));
+
+    if (text.length > 0 && newData.length > 0) {
+      setData(newData);
+    } else {
+      setData(firstData);
+    }
   };
   const addDayToCurDate = useCallback(() => {
     const tomorrow = moment(validateDate(currentDate).replace('.', ''), 'DDMMYYYY').add(1, 'days').format('l');
@@ -79,6 +94,7 @@ const TasksScreen = props => {
 
       if (!cleanupFunction) {
         setData(filterByDateItems);
+        setFirstData(filterByDateItems);
         setIsFetching(false);
       }
     });
@@ -93,6 +109,7 @@ const TasksScreen = props => {
     fetchTasks().then(result => {
       const filterByDateItems = result.filter(item => `${formatDate(new Date(item.taskDate))}` === `${currentDate}`);
       setData(filterByDateItems);
+      setFirstData(filterByDateItems);
       setRefreshing(false);
     });
   }, [data]);
@@ -126,6 +143,18 @@ const TasksScreen = props => {
           modalHandler={setNewTaskModal}
           afterRemoveUpdate={onRefresh}
           isVisible={newTaskModal}
+        />
+        <TextInput
+          placeholder="Найти задачу"
+          style={{
+            marginHorizontal: 30,
+            marginVertical: 10,
+            paddingTop: 0,
+            maxHeight: 40,
+            backgroundColor: '#b7d9e2',
+            justifyContent: 'center'
+          }}
+          onChangeText={text => searchFilters(text)}
         />
         <FlatList
           data={data}
