@@ -130,6 +130,38 @@ const deleteOverWork = async (
   return response.status;
 };
 
+const getProfile = async (userId = '604e5f771c7cc13294faccba') => {
+  const response = await fetch(`https://pure-oasis-02983.herokuapp.com/profile/${userId}`);
+
+  const profile = await response.json();
+
+  return profile;
+};
+
+const updateProfile = async (
+  userId = '604e5f771c7cc13294faccba',
+  name,
+  position,
+  surname,
+  worktypeavg
+) => {
+  const response = await fetch(`https://pure-oasis-02983.herokuapp.com/update_profile/${userId}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name,
+      position,
+      surname,
+      worktypeavg
+    })
+  });
+
+  return response.status;
+};
+
 export {
   fetchTasks,
   deleteTaskById,
@@ -138,5 +170,7 @@ export {
   getAllAnalitics,
   updateSprintAnalitics,
   createOverWork,
-  deleteOverWork
+  deleteOverWork,
+  getProfile,
+  updateProfile
 };

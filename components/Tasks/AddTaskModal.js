@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#5E3FF6',
     width: Dimensions.get('window').width,
-    height: '100%'
+    height: Dimensions.get('window').height
   },
   isEditable: {},
   closeButton: {

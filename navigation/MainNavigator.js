@@ -8,6 +8,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import TasksScreen from '../screens/TasksScreen';
 import SprintScreen from '../screens/SprintScreen';
 import AnaliticsScreen from '../screens/AnaliticsScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const TasksNavigator = createStackNavigator(
   {
@@ -26,6 +27,10 @@ const AnaliticsNavigator = createStackNavigator(
     Analitics: AnaliticsScreen
   }
 );
+
+const ProfileNavigator = createStackNavigator({
+  Profile: ProfileScreen
+});
 
 const MainNavigator = createMaterialBottomTabNavigator({
   Sprint: {
@@ -65,6 +70,17 @@ const MainNavigator = createMaterialBottomTabNavigator({
     },
     tabBarOptions: {
       activeTintColor: '#cd077d'
+    }
+  },
+  Profile: {
+    screen: ProfileNavigator,
+    navigationOptions: {
+      tabBarLabel: 'Профиль',
+      title: 'Профиль',
+      activeColor: '#f0edf6',
+      inactiveColor: '#3e2465',
+      barStyle: { backgroundColor: '#009999' },
+      tabBarIcon: ({ tintColor }) => <MaterialIcons name="supervised-user-circle" size={24} color={tintColor} />
     }
   }
 });
