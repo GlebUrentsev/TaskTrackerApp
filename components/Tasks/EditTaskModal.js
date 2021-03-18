@@ -148,6 +148,8 @@ const EditTaskModal = ({
                 <View style={styles.firstSection}>
                   <View style={styles.titleSection}>
                     <TextInput
+                      placeholder="Название"
+                      placeholderTextColor="#fff"
                       editable={isEditTitle}
                       onChangeText={text => changeTitle(text)}
                       value={title}
@@ -167,6 +169,7 @@ const EditTaskModal = ({
                     <TextInput
                       editable={editDate}
                       placeholder="dd,mm,yyy"
+                      placeholderTextColor="#fff"
                       onChangeText={text => changeDate(text)}
                       value={date}
                       style={!editDate
@@ -191,6 +194,7 @@ const EditTaskModal = ({
                           <Text style={styles.timeText}>Start</Text>
                           <TextInput
                             placeholder="00.00"
+                            placeholderTextColor="#000"
                             editable={editTimeStart}
                             onChangeText={text => setTimeStart(text)}
                             value={timeStart}
@@ -214,6 +218,7 @@ const EditTaskModal = ({
                           <Text style={styles.timeText}>End</Text>
                           <TextInput
                             placeholder="00.00"
+                            placeholderTextColor="#000"
                             editable={editTimeEnd}
                             onChangeText={text => setTimeEnd(text)}
                             value={timeEnd}
@@ -236,6 +241,8 @@ const EditTaskModal = ({
                   <Text style={styles.descInput}>Description</Text>
                   <View style={{ ...styles.titleSection, marginLeft: 20, marginRight: 30 }}>
                     <TextInput
+                      placeholder="Описание"
+                      placeholderTextColor="#000"
                       editable={editDescription}
                       onChangeText={text => setDescription(text)}
                       value={description}

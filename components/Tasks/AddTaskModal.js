@@ -116,6 +116,8 @@ const AddTaskModal = ({
             <View style={styles.firstSection}>
               <View style={styles.titleSection}>
                 <TextInput
+                  placeholder="Название"
+                  placeholderTextColor="#fff"
                   editable={isEditTitle}
                   onChangeText={text => changeTitle(text)}
                   value={title}
@@ -134,6 +136,7 @@ const AddTaskModal = ({
               <View style={{ ...styles.titleSection, ...styles.dateInput }}>
                 <TextInput
                   placeholder="dd,mm,yyy"
+                  placeholderTextColor="#fff"
                   editable={editDate}
                   onChangeText={text => changeDate(text)}
                   value={date}
@@ -159,6 +162,7 @@ const AddTaskModal = ({
                       <Text style={styles.timeText}>Start</Text>
                       <TextInput
                         placeholder="00.00"
+                        placeholderTextColor="#000"
                         editable={editTimeStart}
                         onChangeText={text => setTimeStart(text)}
                         value={timeStart}
@@ -182,6 +186,7 @@ const AddTaskModal = ({
                       <Text style={styles.timeText}>End</Text>
                       <TextInput
                         placeholder="00.00"
+                        placeholderTextColor="#000"
                         editable={editTimeEnd}
                         onChangeText={text => setTimeEnd(text)}
                         value={timeEnd}
@@ -204,6 +209,8 @@ const AddTaskModal = ({
               <Text style={styles.descInput}>Description</Text>
               <View style={{ ...styles.titleSection, marginLeft: 20, marginRight: 30 }}>
                 <TextInput
+                  placeholder="Описание"
+                  placeholderTextColor="#000"
                   editable={editDescription}
                   onChangeText={text => setDescription(text)}
                   value={description}

@@ -9,6 +9,7 @@ import TasksScreen from '../screens/TasksScreen';
 import SprintScreen from '../screens/SprintScreen';
 import AnaliticsScreen from '../screens/AnaliticsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 const TasksNavigator = createStackNavigator(
   {
@@ -18,7 +19,7 @@ const TasksNavigator = createStackNavigator(
 
 const SprintNavigator = createStackNavigator(
   {
-    Tasks: SprintScreen
+    Sprint: SprintScreen
   }
 );
 
@@ -30,6 +31,10 @@ const AnaliticsNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator({
   Profile: ProfileScreen
+});
+
+const LoginNavigator = createStackNavigator({
+  Login: LoginScreen
 });
 
 const MainNavigator = createMaterialBottomTabNavigator({
@@ -87,6 +92,12 @@ const MainNavigator = createMaterialBottomTabNavigator({
 
 const initNavigator = createStackNavigator(
   {
+    Login: {
+      screen: LoginNavigator,
+      navigationOptions: {
+        headerShown: false
+      }
+    },
     Main: {
       screen: MainNavigator,
       navigationOptions: {
