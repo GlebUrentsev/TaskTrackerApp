@@ -1,20 +1,44 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
   View
 } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = props => {
   const [loginData, setLoginData] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setIsError] = useState(false);
 
-  const loginFunc = () => {
+  useEffect(() => {
+    const tryLogin = async () => {
+      try {
+        const loginCheck = await AsyncStorage.getItem('isLogin');
+
+        if (loginCheck) {
+          props.navigation.navigate('Sprint');
+        }
+      } catch (e) {
+        // saving error
+      }
+    };
+
+    tryLogin();
+  }, []);
+
+  const loginFunc = async () => {
     if (loginData === 'Gleb' && password === '123') {
       props.navigation.navigate('Sprint');
+
+      try {
+        AsyncStorage.setItem('isLogin', 'true');
+      } catch (e) {
+        // saving error
+      }
     } else {
       setIsError(true);
     }
