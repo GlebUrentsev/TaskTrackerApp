@@ -147,7 +147,10 @@ const styles = StyleSheet.create({
 });
 
 AnaliticsScreen.navigationOptions = {
-  headerTitle: 'Аналитика'
+  headerTitle: 'Аналитика',
+  headerBackImage: () => null,
+  headerBackTitle: '',
+  headerBackTitleVisible: false
 };
 
 export default AnaliticsScreen;

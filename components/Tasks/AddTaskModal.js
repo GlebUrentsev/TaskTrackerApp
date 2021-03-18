@@ -286,8 +286,7 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     backgroundColor: '#5E3FF6',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height
+    width: Dimensions.get('window').width
   },
   isEditable: {},
   closeButton: {

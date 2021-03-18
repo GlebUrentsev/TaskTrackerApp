@@ -56,7 +56,6 @@ const ProfileScreen = () => {
 
     return () => {
       cleanupFunction = true;
-      setProfileData(null);
     };
   }, []);
 
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#5E3FF6',
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height - 150
+    height: Dimensions.get('window').height - 100
   },
   isEditable: {
     borderColor: 'orange'
@@ -311,7 +310,10 @@ const styles = StyleSheet.create({
 });
 
 ProfileScreen.navigationOptions = {
-  headerTitle: 'Профиль'
+  headerTitle: 'Профиль',
+  headerBackImage: () => null,
+  headerBackTitle: '',
+  headerBackTitleVisible: false
 };
 
 export default ProfileScreen;
